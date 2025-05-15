@@ -3,7 +3,7 @@ import { t } from '@/locales'
 export const themeList = [
   {
     label: t('views.system.theme.default'),
-    value: '#3370FF',
+    value: 'rgb(80, 181, 167)',
     loginBackground: 'default'
   },
   {
@@ -36,7 +36,7 @@ export const defaultSetting = {
   icon: '',
   loginLogo: '',
   loginImage: '',
-  title: 'MaxKB',
+  title: 'GTAI',
   slogan: t('views.system.theme.defaultSlogan')
 }
 

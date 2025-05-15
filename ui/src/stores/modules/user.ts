@@ -41,7 +41,7 @@ const useUserStore = defineStore({
       return this.isXPack
     },
     isDefaultTheme() {
-      return !this.themeInfo?.theme || this.themeInfo?.theme === '#3370FF'
+      return !this.themeInfo?.theme || this.themeInfo?.theme === 'rgb(80, 181, 167)'
     },
     setTheme(data: any) {
       const { changeTheme } = useElementPlusTheme(this.themeInfo?.theme)

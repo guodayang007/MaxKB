@@ -47,7 +47,7 @@ export default {
       templateName: {
         label: 'Model Name',
         placeholder: 'Set a name for the base model',
-        tooltip: 'Custom model name in MaxKB',
+        tooltip: 'Custom model name in GTAI',
         requiredMessage: 'Model name cannot be empty'
       },
       permissionType: {

@@ -286,7 +286,7 @@ const themeForm = ref<any>({
   icon: '',
   loginLogo: '',
   loginImage: '',
-  title: 'MaxKB',
+  title: 'GTAI',
   slogan: t('views.system.theme.defaultSlogan'),
   ...defaultPlatformSetting
 })

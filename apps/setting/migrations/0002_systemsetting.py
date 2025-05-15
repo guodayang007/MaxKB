@@ -2,6 +2,15 @@
 
 from django.db import migrations, models
 
+def insert_default_data(apps, schema_editor):
+    # 创建 一条数据 SystemSetting
+    SystemSetting = apps.get_model('setting', 'SystemSetting')
+    SystemSetting.objects.create(type=2, meta={
+        'url': 'http://106.37.100.66:18082',
+        'api_key': ''
+    })
+
+
 
 class Migration(migrations.Migration):
     dependencies = [
@@ -14,11 +23,12 @@ class Migration(migrations.Migration):
             fields=[
                 ('create_time', models.DateTimeField(auto_now_add=True, verbose_name='创建时间')),
                 ('update_time', models.DateTimeField(auto_now=True, verbose_name='修改时间')),
-                ('type', models.IntegerField(choices=[(0, '邮箱'), (1, '私钥秘钥')], default=0, primary_key=True, serialize=False, verbose_name='设置类型')),
+                ('type', models.IntegerField(choices=[(0, '邮箱'), (1, '私钥秘钥'), (2, 'gtai配置')], default=0, primary_key=True, serialize=False, verbose_name='设置类型')),
                 ('meta', models.JSONField(default=dict, verbose_name='配置数据')),
             ],
             options={
                 'db_table': 'system_setting',
             },
         ),
+        migrations.RunPython(insert_default_data),
     ]

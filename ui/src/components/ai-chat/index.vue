@@ -162,6 +162,7 @@ const initialApiFormData = ref({})
 
 const isUserInput = computed(
   () =>
+    props.type === 'debug-ai-chat' &&
     props.applicationDetails.work_flow?.nodes?.filter((v: any) => v.id === 'base-node')[0]
       .properties.user_input_field_list.length > 0
 )

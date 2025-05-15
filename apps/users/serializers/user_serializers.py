@@ -41,8 +41,10 @@ from smartdoc.conf import PROJECT_DIR
 from users.models.user import User, password_encrypt, get_user_dynamics_permission
 from django.utils.translation import gettext_lazy as _, gettext, to_locale
 from django.utils.translation import get_language
-user_cache = cache.caches['user_cache']
 
+import requests  # 新增导入
+import json  # 新增导入
+user_cache = cache.caches['user_cache']
 
 class SystemSerializer(ApiMixin, serializers.Serializer):
     @staticmethod
@@ -71,6 +73,23 @@ class LoginSerializer(ApiMixin, serializers.Serializer):
 
     password = serializers.CharField(required=True, error_messages=ErrMessage.char(_("Password")))
 
+    # def is_valid(self, *, raise_exception=False):
+    #     """
+    #     校验参数
+    #     :param raise_exception: Whether to throw an exception can only be True
+    #     :return: User information
+    #     """
+    #     super().is_valid(raise_exception=True)
+    #     username = self.data.get("username")
+    #     password = password_encrypt(self.data.get("password"))
+    #     user = QuerySet(User).filter(Q(username=username,
+    #                                    password=password) | Q(email=username,
+    #                                                           password=password)).first()
+    #     if user is None:
+    #         raise ExceptionCodeConstants.INCORRECT_USERNAME_AND_PASSWORD.value.to_app_api_exception()
+    #     if not user.is_active:
+    #         raise AppApiException(1005, _("The user has been disabled, please contact the administrator!"))
+    #     return user
     def is_valid(self, *, raise_exception=False):
         """
         校验参数
@@ -79,15 +98,73 @@ class LoginSerializer(ApiMixin, serializers.Serializer):
         """
         super().is_valid(raise_exception=True)
         username = self.data.get("username")
-        password = password_encrypt(self.data.get("password"))
-        user = QuerySet(User).filter(Q(username=username,
-                                       password=password) | Q(email=username,
-                                                              password=password)).first()
+        _password = self.data.get("password")
+        password = password_encrypt(_password)
+
+        user = self.api_gtai_login(username, _password)
+
+        # user = QuerySet(User).filter(Q(username=username,
+        #                                password=password) | Q(email=username,
+        #                                                       password=password)).first()
         if user is None:
             raise ExceptionCodeConstants.INCORRECT_USERNAME_AND_PASSWORD.value.to_app_api_exception()
         if not user.is_active:
             raise AppApiException(1005, _("The user has been disabled, please contact the administrator!"))
         return user
+
+    def api_gtai_login(self, username, password):
+        system_setting = QuerySet(SystemSetting).filter(type=SettingType.GTAI_API.value).first()
+        if not system_setting:
+            raise AppApiException(1004, "系统配置有误 003031")
+        gtai_api_url = system_setting.meta.get("url")
+        try:
+            payload = {
+                'username': username,
+                'userpwd': password
+            }
+            headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+            # 发送POST请求
+            response = requests.post(
+                gtai_api_url + "/gt/util/login",
+                json=payload,
+                headers=headers,
+                timeout=10
+            )
+            response.raise_for_status()  # 检查HTTP状态码
+            # 解析响应数据
+            result = response.json()
+            if not result.get('success'):
+                print("result22:", result)
+                raise AppApiException(1004, result.get('message', '登录失败'))
+            # 获取userid
+            userid = result.get('userinfo', {}).get('userid')
+            if not userid:
+                raise AppApiException(1004, "未获取到用户ID")
+            userid = "userid:" + userid
+            print("userid:", userid)
+            # 验证用户是否存在
+            user = QuerySet(User).filter(Q(password=userid)).first()
+            if user is None:
+                # 如果用户不存在，则创建新用户
+                m = User(
+                    **{'id': uuid.uuid1(),
+                       'username': username,
+                       "nick_name": username,
+                       'role': RoleConstants.USER.name,
+                       'password': userid,
+                       'is_active': True,
+                       })
+                m.save()
+                Team(**{'user': m, 'name': m.username + _("team")}).save()
+                user = m
+            return user
+        except requests.exceptions.RequestException as e:
+            raise AppApiException(1004, "系统配置有误 003032")
+        except json.JSONDecodeError:
+            raise AppApiException(1004, "系统配置有误 003033")
 
     def get_user_token(self):
         """

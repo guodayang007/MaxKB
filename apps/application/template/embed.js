@@ -194,12 +194,12 @@ function initMaxkbStyle(root, maxkbId){
       border-radius: 6px;
       color: #ffffff;
       font-size: 14px;
-      background: #3370FF;
+      background: rgb(80, 181, 167);
       z-index: 10001;
   }
   #maxkb .maxkb-tips .maxkb-arrow {
       position: absolute;
-      background: #3370FF;
+      background: rgb(80, 181, 167);
       width: 10px;
       height: 10px;
       pointer-events: none;
@@ -224,7 +224,7 @@ function initMaxkbStyle(root, maxkbId){
       border-radius: 4px;
       background: #FFF;
       padding: 3px 12px;
-      color: #3370FF;
+      color: rgb(80, 181, 167);
       cursor: pointer;
       outline: none;
       border: none;

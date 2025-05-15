@@ -7,10 +7,11 @@
           <LogoFull />
         </div>
       </div>
-      <TopMenu></TopMenu>
     </div>
+    <TopMenu></TopMenu>
+
     <div class="flex-center avatar">
-      <el-button
+      <!-- <el-button
         v-if="!user.isEnterprise()"
         link
         type="primary"
@@ -20,8 +21,8 @@
         <AppIcon iconName="app-pricing" class="mr-8" style="font-size: 20px"></AppIcon>
 
         {{ $t('common.professional') }}
-      </el-button>
-      <el-tooltip
+      </el-button> -->
+      <!-- <el-tooltip
         effect="dark"
         :content="$t('layout.github')"
         placement="top"
@@ -33,8 +34,8 @@
           style="font-size: 20px"
           @click="toUrl(user.themeInfo?.projectUrl)"
         ></AppIcon>
-      </el-tooltip>
-      <el-tooltip
+      </el-tooltip> -->
+      <!-- <el-tooltip
         effect="dark"
         :content="$t('layout.wiki')"
         placement="top"
@@ -46,8 +47,9 @@
           style="font-size: 20px"
           @click="toUrl(user.themeInfo?.userManualUrl)"
         ></AppIcon>
-      </el-tooltip>
-      <el-tooltip
+      </el-tooltip> -->
+
+      <!-- <el-tooltip
         effect="dark"
         :content="$t('layout.forum')"
         placement="top"
@@ -59,7 +61,9 @@
           style="font-size: 20px"
           @click="toUrl(user.themeInfo?.forumUrl)"
         ></AppIcon>
-      </el-tooltip>
+      </el-tooltip> -->
+
+
       <!-- <el-dropdown trigger="click" type="primary">
         <template #dropdown>
           <el-dropdown-menu>

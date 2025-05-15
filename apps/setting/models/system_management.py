@@ -18,6 +18,8 @@ class SettingType(models.IntegerChoices):
 
     RSA = 1, "私钥秘钥"
 
+    GTAI_API = 2, "gtai配置"
+
 
 class SystemSetting(AppModelMixin):
     """

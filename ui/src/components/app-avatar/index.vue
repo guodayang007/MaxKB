@@ -30,7 +30,7 @@ const firstUserName = computed(() => {
 
 const getAvatarColour = (name: string) => {
   const colours = [
-    '#3370FF',
+    'rgb(80, 181, 167)',
     '#4954E6',
     '#F54A45',
     '#00B69D',

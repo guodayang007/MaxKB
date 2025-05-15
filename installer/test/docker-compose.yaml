@@ -1,0 +1,12 @@
+version: '3'
+# docker build -f installer/Dockerfile -t guo-maxkb:latest .&& cd installer && docker-compose up -d && cd ..
+services:
+  gtai-docker:
+    image: 11153123/gtai-platform:latest
+    container_name: gtai-docker
+    ports:
+      - "8080:8080"
+      - "5432:5432"
+    volumes:
+      - ./maxkb:/var/lib/postgresql/data
+      - ./python-packages:/opt/maxkb/app/sandbox/python-packages
