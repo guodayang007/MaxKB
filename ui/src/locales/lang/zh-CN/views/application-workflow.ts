@@ -32,7 +32,7 @@ export default {
     notRecyclable: '不可循环连线',
     onlyLeft: '只允许连接左边的锚点',
     applicationNodeError: '该应用不可用',
-    functionNodeError: '该函数不可用',
+    functionNodeError: '该工具不可用',
     repeatedNodeError: '节点名称已存在！',
     cannotCopy: '不能被复制',
     copyError: '已复制节点',
@@ -273,7 +273,7 @@ export default {
       }
     },
     functionNode: {
-      label: '自定义函数',
+      label: '自定义工具',
       text: '通过执行自定义脚本，实现数据处理'
     },
     applicationNode: {

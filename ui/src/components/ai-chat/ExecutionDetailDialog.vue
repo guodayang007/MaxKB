@@ -419,7 +419,7 @@
                     </div>
                   </template>
 
-                  <!-- 函数库 -->
+                  <!-- 工具库 -->
                   <template
                     v-if="
                       item.type === WorkflowType.FunctionLib ||

@@ -67,7 +67,7 @@ const renderGraphData = (data?: any) => {
       adjustEdge: false,
       adjustEdgeStartAndEnd: false,
       background: {
-        backgroundColor: '#f5f6f7'
+        backgroundColor: '#fcfcff'
       },
       grid: {
         size: 10,

@@ -58,7 +58,6 @@
           ></TransitionContent>
         </div>
       </el-scrollbar>
-
       <ChatInputOperate
         :app-id="appId"
         :application-details="applicationDetails"
@@ -115,6 +114,7 @@ import UserForm from '@/components/ai-chat/component/user-form/index.vue'
 import Control from '@/components/ai-chat/component/control/index.vue'
 import { t } from '@/locales'
 import bus from '@/bus'
+import log from '@/api/log'
 const transcribing = ref<boolean>(false)
 defineOptions({ name: 'AiChat' })
 const route = useRoute()
@@ -238,7 +238,7 @@ function UserFormCancel() {
 const validate = () => {
   return userFormRef.value?.validate() || Promise.reject(false)
 }
-
+// 郭大洋？
 function sendMessage(val: string, other_params_data?: any, chat?: chatType): Promise<boolean> {
   if (isUserInput.value) {
     if (userFormRef.value) {
@@ -336,7 +336,7 @@ function getChartOpenId(chat?: any, problem?: string, re_chat?: boolean, other_p
 }
 
 /**
- * 获取一个递归函数,处理流式数据
+ * 获取一个递归工具,处理流式数据
  * @param chat    每一条对话记录
  * @param reader  流数据
  * @param stream  是否是流式数据
@@ -420,8 +420,9 @@ const errorWrite = (chat: any, message?: string) => {
   ChatManagement.close(chat.id)
 }
 // 保存上传文件列表
-
+// 郭大洋？
 function chatMessage(chat?: any, problem?: string, re_chat?: boolean, other_params_data?: any) {
+  console.log("chatMessage", chat, problem, re_chat, other_params_data);
   loading.value = true
   if (!chat) {
     chat = reactive({
@@ -514,7 +515,8 @@ function chatMessage(chat?: any, problem?: string, re_chat?: boolean, other_para
         if (props.chatId === 'new') {
           emit('refresh', chartOpenId.value)
         }
-        return (id || props.applicationDetails?.show_source) && getSourceDetail(chat)
+        console.log("::::id",id,props.applicationDetails?.show_source);
+        return  getSourceDetail(chat)
       })
       .finally(() => {
         ChatManagement.close(chat.id)

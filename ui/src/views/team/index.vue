@@ -252,6 +252,7 @@ onMounted(() => {
     box-sizing: border-box;
     width: var(--setting-left-width);
     min-width: var(--setting-left-width);
+    // ba
   }
 
   .permission-setting {

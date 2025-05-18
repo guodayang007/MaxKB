@@ -1,30 +1,35 @@
 <template>
-  <div class="application-list-container p-24" style="padding-top: 16px">
-    <div class="flex-between mb-16">
-      <h4>{{ $t('views.application.title') }}</h4>
-      <div class="flex-between">
-        <el-select
-          v-model="selectUserId"
-          class="mr-12"
-          @change="searchHandle"
-          style="max-width: 240px; width: 150px"
-        >
-          <el-option
-            v-for="item in userOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+  <div class="application-list-container p-24" style="padding-top: 24px">
+    <div class="header-container mb-24">
+      <div class="title-section">
+        <h4 class="page-title">{{ $t('views.application.title') }}</h4>
+        <div class="title-decoration"></div>
+      </div>
+      <div class="search-section">
+        <div class="search-wrapper">
+          <el-select
+            v-model="selectUserId"
+            class="mr-12 filter-select"
+            @change="searchHandle"
+            style="max-width: 240px; width: 150px"
+          >
+            <el-option
+              v-for="item in userOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+          <el-input
+            v-model="searchValue"
+            @change="searchHandle"
+            :placeholder="$t('views.application.searchBar.placeholder')"
+            prefix-icon="Search"
+            class="w-240 search-input"
+            style="min-width: 240px"
+            clearable
           />
-        </el-select>
-        <el-input
-          v-model="searchValue"
-          @change="searchHandle"
-          :placeholder="$t('views.application.searchBar.placeholder')"
-          prefix-icon="Search"
-          class="w-240"
-          style="min-width: 240px"
-          clearable
-        />
+        </div>
       </div>
     </div>
     <div v-loading.fullscreen.lock="paginationConfig.current_page === 1 && loading">
@@ -36,11 +41,11 @@
         @load="getList"
         :loading="loading"
       >
-        <el-row :gutter="15">
-          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="mb-16">
+        <el-row :gutter="20">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="mb-20">
             <el-card shadow="hover" class="application-card-add" style="--el-card-padding: 8px">
-              <div class="card-add-button flex align-center cursor p-8" @click="openCreateDialog">
-                <AppIcon iconName="app-add-application" class="mr-8"></AppIcon>
+              <div class="card-add-button flex align-center cursor p-12" @click="openCreateDialog">
+                <AppIcon iconName="app-add-application" class="mr-8 add-icon"></AppIcon>
                 {{ $t('views.application.createApplication') }}
               </div>
               <el-divider style="margin: 8px 0" />
@@ -55,8 +60,8 @@
                 :on-change="(file: any, fileList: any) => importApplication(file)"
                 class="card-add-button"
               >
-                <div class="flex align-center cursor p-8">
-                  <AppIcon iconName="app-import" class="mr-8"></AppIcon>
+                <div class="flex align-center cursor p-12">
+                  <AppIcon iconName="app-import" class="mr-8 import-icon"></AppIcon>
                   {{ $t('views.application.importApplication') }}
                 </div>
               </el-upload>
@@ -70,7 +75,7 @@
             :xl="6"
             v-for="(item, index) in applicationList"
             :key="index"
-            class="mb-16"
+            class="mb-20"
           >
             <CardBox
               :title="item.name"
@@ -82,9 +87,9 @@
                 <AppAvatar
                   v-if="isAppIcon(item?.icon)"
                   shape="square"
-                  :size="32"
+                  :size="40"
                   style="background: none"
-                  class="mr-8"
+                  class="mr-8 app-icon"
                 >
                   <img :src="item?.icon" alt="" />
                 </AppAvatar>
@@ -93,66 +98,59 @@
                   :name="item?.name"
                   pinyinColor
                   shape="square"
-                  :size="32"
-                  class="mr-8"
+                  :size="40"
+                  class="mr-8 app-icon"
                 />
               </template>
               <template #subTitle>
-                <el-text class="color-secondary" size="small">
+                <el-text class="color-secondary creator-info" size="small">
                   <auto-tooltip :content="item.username">
                     {{ $t('common.creator') }}: {{ item.username }}
                   </auto-tooltip>
                 </el-text>
               </template>
               <div class="status-tag">
-                <el-tag type="warning" v-if="isWorkFlow(item.type)" style="height: 22px">
-                  {{ $t('views.application.workflow') }}
-                </el-tag>
-                <el-tag class="blue-tag" v-else style="height: 22px">
-                  {{ $t('views.application.simple') }}
-                </el-tag>
+                <div v-if="isWorkFlow(item.type)" class="app-tag workflow-tag">
+                  <el-icon class="tag-icon"><Connection /></el-icon>
+                  <span class="tag-text">{{ $t('views.application.workflow') }}</span>
+                </div>
+                <div v-else class="app-tag simple-tag">
+                  <el-icon class="tag-icon"><Document /></el-icon>
+                  <span class="tag-text">{{ $t('views.application.simple') }}</span>
+                </div>
               </div>
 
               <template #footer>
                 <div class="footer-content">
-                  <el-tooltip
-                    effect="dark"
-                    :content="$t('views.application.setting.demo')"
-                    placement="top"
-                  >
-                    <el-button text @click.stop @click="getAccessToken(item.id)">
-                      <AppIcon iconName="app-view"></AppIcon>
-                    </el-button>
-                  </el-tooltip>
-                  <el-divider direction="vertical" />
-                  <el-tooltip effect="dark" :content="$t('common.setting')" placement="top">
-                    <el-button text @click.stop="settingApplication(item)">
-                      <AppIcon iconName="Setting"></AppIcon>
-                    </el-button>
-                  </el-tooltip>
-                  <el-divider direction="vertical" />
-                  <span @click.stop>
+                  <span @click.stop class="dropdown-container">
                     <el-dropdown trigger="click">
-                      <el-button text @click.stop>
+                      <el-button text class="action-button" @click.stop>
                         <el-icon><MoreFilled /></el-icon>
                       </el-button>
                       <template #dropdown>
                         <el-dropdown-menu>
+                          <el-dropdown-item @click="getAccessToken(item.id)">
+                            <AppIcon iconName="app-view" class="dropdown-icon"></AppIcon>
+                            {{ $t('views.application.setting.demo') }}
+                          </el-dropdown-item>
+                          <el-dropdown-item @click="settingApplication(item)">
+                            <AppIcon iconName="Setting" class="dropdown-icon"></AppIcon>
+                            {{ $t('common.setting') }}
+                          </el-dropdown-item>
                           <el-dropdown-item
                             v-if="is_show_copy_button(item)"
                             @click="copyApplication(item)"
                           >
-                            <AppIcon iconName="app-copy"></AppIcon>
+                            <AppIcon iconName="app-copy" class="dropdown-icon"></AppIcon>
                             {{ $t('common.copy') }}
                           </el-dropdown-item>
                           <el-dropdown-item @click.stop="exportApplication(item)">
-                            <AppIcon iconName="app-export"></AppIcon>
-
+                            <AppIcon iconName="app-export" class="dropdown-icon"></AppIcon>
                             {{ $t('common.export') }}
                           </el-dropdown-item>
-                          <el-dropdown-item icon="Delete" @click.stop="deleteApplication(item)">{{
-                            $t('common.delete')
-                          }}</el-dropdown-item>
+                          <el-dropdown-item icon="Delete" @click.stop="deleteApplication(item)">
+                            {{ $t('common.delete') }}
+                          </el-dropdown-item>
                         </el-dropdown-menu>
                       </template>
                     </el-dropdown>
@@ -169,6 +167,8 @@
   </div>
 </template>
 <script setup lang="ts">
+  // <!-- 创建应用 -->
+
 import { ref, onMounted, reactive } from 'vue'
 import applicationApi from '@/api/application'
 import CreateApplicationDialog from './component/CreateApplicationDialog.vue'
@@ -396,24 +396,52 @@ onMounted(() => {
 })
 </script>
 <style lang="scss" scoped>
+.application-list-container {
+  background-color: var(--el-bg-color);
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin-bottom: 24px; /* 增加标题下方间距 */
+}
+
+.filter-select, .search-input {
+  border-radius: 8px;
+  
+  :deep(.el-input__wrapper) {
+    box-shadow: 0 0 0 1px var(--el-border-color-light) inset;
+  }
+}
+
 .application-card-add {
   width: 100%;
   font-size: 14px;
   min-height: var(--card-min-height);
-  border: 1px dashed var(--el-border-color);
-  background: var(--el-disabled-bg-color);
-  border-radius: 8px;
+  border: 1px dashed rgba(80, 181, 167, 0.4);
+  background: rgba(80, 181, 167, 0.05);
+  border-radius: 15px;
   box-sizing: border-box;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
 
   &:hover {
-    border: 1px solid var(--el-card-bg-color);
-    background-color: var(--el-card-bg-color);
+    border: 1px solid rgba(80, 181, 167, 0.7);
+    background-color: rgba(80, 181, 167, 0.1);
+    
+    .add-icon, .import-icon {
+      color: rgb(80, 181, 167);
+    }
   }
 
   .card-add-button {
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    padding: 16px 12px;
+    
     &:hover {
-      border-radius: 4px;
-      background: var(--app-text-color-light-1);
+      background: rgba(80, 181, 167, 0.15);
     }
 
     :deep(.el-upload) {
@@ -425,10 +453,115 @@ onMounted(() => {
 }
 
 .application-card {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: 0 2px 12px 0 rgba(12, 143, 25, 0.05);
+  display: flex;
+  flex-direction: column;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  .app-icon {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-right: 12px; /* 增加图标右侧间距 */
+  }
+  
+  .creator-info {
+    font-size: 12px;
+    color: var(--el-text-color-secondary);
+    margin-top: 8px; /* 增加创建者信息上方间距 */
+    margin-bottom: 8px; /* 增加创建者信息下方间距 */
+  }
+
   .status-tag {
     position: absolute;
     right: 16px;
     top: 15px;
+    
+    .app-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      height: 24px;
+      font-size: 12px;
+      border-radius: 5px;
+      
+      .tag-icon {
+        font-size: 14px;
+        margin-right: 4px;
+        display: flex;
+        align-items: center;
+        height: 100%;
+        
+        :deep(svg) {
+          width: 14px;
+          height: 14px;
+        }
+      }
+      
+      .tag-text {
+        line-height: 14px;
+        display: inline-flex;
+        align-items: center;
+        height: 100%;
+      }
+    }
+    
+    .workflow-tag {
+      background-color: rgba(80, 181, 167, 0.1);
+      color: rgb(80, 181, 167);
+      border-color: rgba(80, 181, 167, 0.2);
+    }
+    
+    .simple-tag {
+      background-color: rgba(80, 181, 167, 0.1);
+      color: rgb(80, 181, 167);
+      border-color: rgba(80, 181, 167, 0.2);
+    }
+  }
+  
+  .footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(35, 73, 68, 0.1);
+    
+    .dropdown-container {
+      margin-left: auto; /* 将下拉菜单推到右侧 */
+    }
+    
+    .action-button {
+      padding: 6px;
+      border-radius: 4px;
+      
+      &:hover {
+        background-color: rgba(80, 181, 167, 0.1);
+        color: rgb(80, 181, 167);
+      }
+    }
+  }
+}
+
+:deep(.el-dropdown-menu__item) {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  
+  .dropdown-icon {
+    margin-right: 8px;
+    font-size: 16px;
+  }
+  
+  &:hover {
+    background-color: rgba(80, 181, 167, 0.1);
+    color: rgb(80, 181, 167);
   }
 }
 
@@ -439,6 +572,135 @@ onMounted(() => {
 
   span {
     margin-right: 26px;
+  }
+}
+
+:deep(.el-card__body) {
+  padding: 20px; /* 增加卡片内部间距 */
+}
+
+:deep(.el-divider--horizontal) {
+  margin: 16px 0; /* 增加分隔线上下间距 */
+}
+
+/* 增加行间距 */
+.el-row {
+  margin-bottom: 24px !important;
+}
+
+/* 增加列间距 */
+.el-col {
+  margin-bottom: 24px !important;
+}
+
+/* 调整卡片内容间距 */
+:deep(.card-box-content) {
+  padding: 16px 0;
+}
+
+:deep(.card-box-title) {
+  margin-bottom: 12px;
+}
+
+:deep(.card-box-description) {
+  margin-top: 12px;
+  margin-bottom: 16px;
+  line-height: 1.6; /* 增加描述文本的行高 */
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, rgba(80, 181, 167, 0.05) 0%, rgba(80, 181, 167, 0.1) 100%);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(28, 57, 53, 0.1);
+  box-shadow: 0 4px 24px -8px rgba(80, 181, 167, 0.15);
+
+  .title-section {
+    position: relative;
+    
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--el-text-color-primary);
+      margin: 0;
+      position: relative;
+      z-index: 1;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 40%;
+        height: 3px;
+        background: linear-gradient(90deg, rgb(80, 181, 167) 0%, rgba(80, 181, 167, 0.2) 100%);
+        border-radius: 2px;
+      }
+    }
+
+    .title-decoration {
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, rgba(80, 181, 167, 0.2) 0%, rgba(80, 181, 167, 0.05) 100%);
+      border-radius: 6px;
+      z-index: 0;
+    }
+  }
+
+  .search-section {
+    .search-wrapper {
+      display: flex;
+      gap: 12px;
+      padding: 4px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(80, 181, 167, 0.08);
+      
+      .filter-select, .search-input {
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        
+        :deep(.el-input__wrapper) {
+          background: rgba(255, 255, 255, 0.9);
+          box-shadow: 0 0 0 1px rgba(80, 181, 167, 0.1) inset;
+          backdrop-filter: blur(4px);
+          
+          &:hover {
+            box-shadow: 0 0 0 1px rgba(80, 181, 167, 0.3) inset;
+          }
+          
+          &:focus-within {
+            box-shadow: 0 0 0 1px rgb(80, 181, 167) inset;
+          }
+        }
+        
+        :deep(.el-input__inner) {
+          &::placeholder {
+            color: rgba(0, 0, 0, 0.4);
+          }
+        }
+      }
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 20px;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, rgb(80, 181, 167), transparent);
+    border-radius: 0 0 3px 3px;
   }
 }
 </style>

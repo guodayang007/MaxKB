@@ -355,7 +355,7 @@ export const menuNodes = [
 ]
 
 /**
- * 自定义函数配置数据
+ * 自定义工具配置数据
  */
 export const functionNode = {
   type: WorkflowType.FunctionLibCustom,

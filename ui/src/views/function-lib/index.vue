@@ -92,7 +92,7 @@
               v-if="functionType === 'PUBLIC'"
               :title="item.name"
               :description="item.desc"
-              class="function-lib-card"
+              class="application-card cursor"
               @click="openCreateDialog(item)"
               :class="item.permission_type === 'PUBLIC' && !canEdit(item) ? '' : 'cursor'"
             >
@@ -102,7 +102,7 @@
                   shape="square"
                   :size="32"
                   style="background: none"
-                  class="mr-8"
+                  class="mr-8  app-icon"
                 >
                   <img :src="item?.icon" alt="" />
                 </AppAvatar>
@@ -116,13 +116,13 @@
                 />
               </template>
               <template #subTitle>
-                <el-text class="color-secondary" size="small">
+                <el-text class="color-secondary creator-info" size="small">
                   <auto-tooltip :content="item.username">
                     {{ $t('common.creator') }}: {{ item.username }}
                   </auto-tooltip>
                 </el-text>
               </template>
-              <div class="status-button">
+              <div class="status-tag">
                 <el-tag
                   class="info-tag"
                   v-if="item.permission_type === 'PUBLIC'"
@@ -139,7 +139,7 @@
                 >
               </div>
               <template #footer>
-                <div class="footer-content flex-between">
+                <div class="footer-content">
                   <div>
                     <span v-if="item.template_id"> {{ $t('common.author') }}: GTAI</span>
                   </div>
@@ -569,25 +569,51 @@ onMounted(() => {
 
 })
 </script>
-<style lang="scss" scoped>
+<style lang="scss" scoped>.application-list-container {
+  background-color: var(--el-bg-color);
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin-bottom: 24px; /* 增加标题下方间距 */
+}
+
+.filter-select, .search-input {
+  border-radius: 8px;
+  
+  :deep(.el-input__wrapper) {
+    box-shadow: 0 0 0 1px var(--el-border-color-light) inset;
+  }
+}
+
 .application-card-add {
   width: 100%;
   font-size: 14px;
-  min-height: var(--card-min-height);
-  border: 1px dashed var(--el-border-color);
-  background: var(--el-disabled-bg-color);
-  border-radius: 8px;
+  border: 1px dashed rgba(80, 181, 167, 0.4);
+  background: rgba(80, 181, 167, 0.05);
+  border-radius: 15px;
   box-sizing: border-box;
+  transition: all 0.3s ease;
+  // margin-bottom: 10px;
 
   &:hover {
-    border: 1px solid var(--el-card-bg-color);
-    background-color: var(--el-card-bg-color);
+    border: 1px solid rgba(80, 181, 167, 0.7);
+    background-color: rgba(80, 181, 167, 0.1);
+    
+    .add-icon, .import-icon {
+      color: rgb(80, 181, 167);
+    }
   }
 
   .card-add-button {
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    padding: 12px 12px;
+    
     &:hover {
-      border-radius: 4px;
-      background: var(--app-text-color-light-1);
+      background: rgba(80, 181, 167, 0.15);
     }
 
     :deep(.el-upload) {
@@ -599,19 +625,254 @@ onMounted(() => {
 }
 
 .application-card {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: 0 2px 12px 0 rgba(12, 143, 25, 0.05);
+  display: flex;
+  flex-direction: column;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  .app-icon {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-right: 12px; /* 增加图标右侧间距 */
+  }
+  
+  .creator-info {
+    font-size: 12px;
+    color: var(--el-text-color-secondary);
+    margin-top: 8px; /* 增加创建者信息上方间距 */
+    margin-bottom: 8px; /* 增加创建者信息下方间距 */
+  }
+
   .status-tag {
     position: absolute;
     right: 16px;
     top: 15px;
+    
+    .app-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      height: 24px;
+      font-size: 12px;
+      border-radius: 5px;
+      
+      .tag-icon {
+        font-size: 14px;
+        margin-right: 4px;
+        display: flex;
+        align-items: center;
+        height: 100%;
+        
+        :deep(svg) {
+          width: 14px;
+          height: 14px;
+        }
+      }
+      
+      .tag-text {
+        line-height: 14px;
+        display: inline-flex;
+        align-items: center;
+        height: 100%;
+      }
+    }
+    
+    .workflow-tag {
+      background-color: rgba(80, 181, 167, 0.1);
+      color: rgb(80, 181, 167);
+      border-color: rgba(80, 181, 167, 0.2);
+    }
+    
+    .simple-tag {
+      background-color: rgba(80, 181, 167, 0.1);
+      color: rgb(80, 181, 167);
+      border-color: rgba(80, 181, 167, 0.2);
+    }
+  }
+  
+  .footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(35, 73, 68, 0.1);
+    
+    .dropdown-container {
+      margin-left: auto; /* 将下拉菜单推到右侧 */
+    }
+    
+    .action-button {
+      padding: 6px;
+      border-radius: 4px;
+      
+      &:hover {
+        background-color: rgba(80, 181, 167, 0.1);
+        color: rgb(80, 181, 167);
+      }
+    }
   }
 }
 
-.function-lib-list-container {
-  .status-button {
+:deep(.el-dropdown-menu__item) {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  
+  .dropdown-icon {
+    margin-right: 8px;
+    font-size: 16px;
+  }
+  
+  &:hover {
+    background-color: rgba(80, 181, 167, 0.1);
+    color: rgb(80, 181, 167);
+  }
+}
+
+.dropdown-custom-switch {
+  padding: 5px 11px;
+  font-size: 14px;
+  font-weight: 400;
+
+  span {
+    margin-right: 26px;
+  }
+}
+
+:deep(.el-card__body) {
+  padding: 20px; /* 增加卡片内部间距 */
+}
+
+:deep(.el-divider--horizontal) {
+  margin: 16px 0; /* 增加分隔线上下间距 */
+}
+
+/* 增加行间距 */
+.el-row {
+  margin-bottom: 24px !important;
+}
+
+/* 增加列间距 */
+.el-col {
+  margin-bottom: 24px !important;
+}
+
+/* 调整卡片内容间距 */
+:deep(.card-box-content) {
+  padding: 16px 0;
+}
+
+:deep(.card-box-title) {
+  margin-bottom: 12px;
+}
+
+:deep(.card-box-description) {
+  margin-top: 12px;
+  margin-bottom: 16px;
+  line-height: 1.6; /* 增加描述文本的行高 */
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, rgba(80, 181, 167, 0.05) 0%, rgba(80, 181, 167, 0.1) 100%);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(28, 57, 53, 0.1);
+  box-shadow: 0 4px 24px -8px rgba(80, 181, 167, 0.15);
+
+  .title-section {
+    position: relative;
+    
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--el-text-color-primary);
+      margin: 0;
+      position: relative;
+      z-index: 1;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 40%;
+        height: 3px;
+        background: linear-gradient(90deg, rgb(80, 181, 167) 0%, rgba(80, 181, 167, 0.2) 100%);
+        border-radius: 2px;
+      }
+    }
+
+    .title-decoration {
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, rgba(80, 181, 167, 0.2) 0%, rgba(80, 181, 167, 0.05) 100%);
+      border-radius: 6px;
+      z-index: 0;
+    }
+  }
+
+  .search-section {
+    .search-wrapper {
+      display: flex;
+      gap: 12px;
+      padding: 4px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(80, 181, 167, 0.08);
+      
+      .filter-select, .search-input {
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        
+        :deep(.el-input__wrapper) {
+          background: rgba(255, 255, 255, 0.9);
+          box-shadow: 0 0 0 1px rgba(80, 181, 167, 0.1) inset;
+          backdrop-filter: blur(4px);
+          
+          &:hover {
+            box-shadow: 0 0 0 1px rgba(80, 181, 167, 0.3) inset;
+          }
+          
+          &:focus-within {
+            box-shadow: 0 0 0 1px rgb(80, 181, 167) inset;
+          }
+        }
+        
+        :deep(.el-input__inner) {
+          &::placeholder {
+            color: rgba(0, 0, 0, 0.4);
+          }
+        }
+      }
+    }
+  }
+
+  &::before {
+    content: '';
     position: absolute;
-    right: 12px;
-    top: 15px;
-    height: auto;
+    top: -2px;
+    left: 20px;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, rgb(80, 181, 167), transparent);
+    border-radius: 0 0 3px 3px;
   }
 }
 </style>

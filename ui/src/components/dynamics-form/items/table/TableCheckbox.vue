@@ -21,7 +21,7 @@
       ref="multipleTableRef"
       :data="tableData"
       highlight-current-row
-      style="width: 100%; height: 100%; --el-bg-color: #f5f6f7"
+      style="width: 100%; height: 100%; --el-bg-color: #fcfcff"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />

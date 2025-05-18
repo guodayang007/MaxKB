@@ -116,7 +116,8 @@ Response requirements:
         tooltip:
           "Please set the thinking label based on the model's return, and the content in the middle of the label will be recognized as the thinking process.",
         start: 'Start',
-        end: 'End'
+        end: 'End',
+        A1: "show knowledge",
       }
     },
     buttons: {

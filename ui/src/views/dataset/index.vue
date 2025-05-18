@@ -1,30 +1,35 @@
 <template>
-  <div class="dataset-list-container p-24" style="padding-top: 16px">
-    <div class="flex-between mb-16">
-      <h4>{{ $t('views.dataset.title') }}</h4>
-      <div class="flex-between">
-        <el-select
-          v-model="selectUserId"
-          class="mr-12"
-          @change="searchHandle"
-          style="max-width: 240px; width: 150px"
-        >
-          <el-option
-            v-for="item in userOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+  <div class="dataset-list-container p-24" style="padding-top: 24px">
+    <div class="header-container mb-24">
+      <div class="title-section">
+        <h4 class="page-title">{{ $t('views.dataset.title') }}</h4>
+        <div class="title-decoration"></div>
+      </div>
+      <div class="search-section">
+        <div class="search-wrapper">
+          <el-select
+            v-model="selectUserId"
+            class="mr-12 filter-select"
+            @change="searchHandle"
+            style="max-width: 240px; width: 150px"
+          >
+            <el-option
+              v-for="item in userOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+          <el-input
+            v-model="searchValue"
+            @change="searchHandle"
+            :placeholder="$t('views.dataset.searchBar.placeholder')"
+            prefix-icon="Search"
+            class="w-240 search-input"
+            style="min-width: 240px"
+            clearable
           />
-        </el-select>
-        <el-input
-          v-model="searchValue"
-          @change="searchHandle"
-          :placeholder="$t('views.dataset.searchBar.placeholder')"
-          prefix-icon="Search"
-          class="w-240"
-          style="max-width: 240px"
-          clearable
-        />
+        </div>
       </div>
     </div>
     <div v-loading.fullscreen.lock="paginationConfig.current_page === 1 && loading">
@@ -331,17 +336,252 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 .dataset-list-container {
+  background-color: var(--el-bg-color);
+  :deep(.el-col) {
+    .card-box {
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      // border: 1px solid rgba(80, 181, 167, 0.1);
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(255, 255, 255, 0.95) 100%
+      );
+      backdrop-filter: blur(8px);
+      
+      &:hover {
+        transform: translateY(-2px);
+        border-color: rgba(80, 181, 167, 0.3);
+        box-shadow: 0 8px 24px -4px rgba(80, 181, 167, 0.15);
+        
+        &::before {
+          opacity: 1;
+        }
+      }
+      
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg,
+          rgba(80, 181, 167, 0.05),
+          rgba(80, 181, 167, 0.02)
+        );
+        border-radius: inherit;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .avatar-purple, .avatar-blue {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg,
+            rgba(80, 181, 167, 0.2),
+            rgba(80, 181, 167, 0.1)
+          );
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        
+        &:hover {
+          transform: scale(1.05);
+          
+          &::after {
+            opacity: 1;
+          }
+        }
+        
+        img {
+          transition: transform 0.3s ease;
+        }
+      }
+
+      .delete-button {
+        .el-tag {
+          transition: all 0.3s ease;
+          border: 1px solid rgba(80, 181, 167, 0.2);
+          background: rgba(80, 181, 167, 0.1);
+          color: rgb(80, 181, 167);
+          
+          &.blue-tag {
+            background: rgba(80, 181, 167, 0.1);
+            border-color: rgba(80, 181, 167, 0.2);
+            color: rgb(80, 181, 167);
+          }
+          
+          &.purple-tag {
+            background: rgba(80, 181, 167, 0.1);
+            border-color: rgba(80, 181, 167, 0.2);
+            color: rgb(80, 181, 167);
+          }
+        }
+      }
+
+      .footer-content {
+        position: relative;
+        padding: 12px 16px;
+        background: linear-gradient(to right,
+          rgba(80, 181, 167, 0.05),
+          rgba(80, 181, 167, 0.02)
+        );
+        border-radius: 0 0 8px 8px;
+        
+        .bold {
+          color: rgb(80, 181, 167);
+          font-weight: 600;
+        }
+        
+        .el-divider {
+          background-color: rgba(80, 181, 167, 0.2);
+          margin: 0 8px;
+        }
+        
+        :deep(.el-button) {
+          &:hover {
+            background: rgba(80, 181, 167, 0.1);
+            
+            .el-icon {
+              transform: rotate(90deg);
+              color: rgb(80, 181, 167);
+            }
+          }
+          
+          .el-icon {
+            transition: all 0.3s ease;
+          }
+        }
+      }
+    }
+  }
+  .page-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+    margin-bottom: 24px;
+  }
+
+  .filter-select, .search-input {
+    border-radius: 8px;
+    
+    :deep(.el-input__wrapper) {
+      box-shadow: 0 0 0 1px var(--el-border-color-light) inset;
+    }
+  }
+
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, rgba(80, 181, 167, 0.05) 0%, rgba(80, 181, 167, 0.1) 100%);
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(80, 181, 167, 0.1);
+    box-shadow: 0 4px 24px -8px rgba(80, 181, 167, 0.15);
+
+    .title-section {
+      position: relative;
+      
+      .page-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--el-text-color-primary);
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -4px;
+          left: 0;
+          width: 40%;
+          height: 3px;
+          background: linear-gradient(90deg, rgb(80, 181, 167) 0%, rgba(80, 181, 167, 0.2) 100%);
+          border-radius: 2px;
+        }
+      }
+
+      .title-decoration {
+        position: absolute;
+        top: 50%;
+        left: -12px;
+        transform: translateY(-50%);
+        width: 24px;
+        height: 24px;
+        background: linear-gradient(135deg, rgba(80, 181, 167, 0.2) 0%, rgba(80, 181, 167, 0.05) 100%);
+        border-radius: 6px;
+        z-index: 0;
+      }
+    }
+
+    .search-section {
+      .search-wrapper {
+        display: flex;
+        gap: 12px;
+        padding: 4px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(80, 181, 167, 0.08);
+        
+        .filter-select, .search-input {
+          border-radius: 8px;
+          transition: all 0.3s ease;
+          
+          :deep(.el-input__wrapper) {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 1px rgba(80, 181, 167, 0.1) inset;
+            backdrop-filter: blur(4px);
+            
+            &:hover {
+              box-shadow: 0 0 0 1px rgba(80, 181, 167, 0.3) inset;
+            }
+            
+            &:focus-within {
+              box-shadow: 0 0 0 1px rgb(80, 181, 167) inset;
+            }
+          }
+          
+          :deep(.el-input__inner) {
+            &::placeholder {
+              color: rgba(0, 0, 0, 0.4);
+            }
+          }
+        }
+      }
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 20px;
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, rgb(80, 181, 167), transparent);
+      border-radius: 0 0 3px 3px;
+    }
+  }
+
   .delete-button {
     position: absolute;
     right: 12px;
     top: 15px;
     height: auto;
   }
+  
   .footer-content {
     .bold {
       color: var(--app-text-color);
     }
   }
+  
   :deep(.el-divider__text) {
     background: var(--app-layout-bg-color);
   }

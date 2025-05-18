@@ -39,12 +39,21 @@
           <p v-else shadow="always" style="margin: 0.5rem 0">
             {{ $t('chat.tip.answerLoading') }} <span class="dotting"></span>
           </p>
+<!--          {{application}}-->
+<!--           {{chatRecord}}-->
           <!-- 知识来源 -->
           <KnowledgeSource
             :data="chatRecord"
             :type="application.type"
             v-if="showSource(chatRecord) && index === chatRecord.answer_text_list.length - 1"
           />
+          <div v-else-if="application.ying_yong_zhi_shi_ku">
+            <KnowledgeSource
+              :data="chatRecord"
+              :type="application.type"
+              v-if="chatRecord.paragraph_list?.length>=1"
+            />
+          </div>
         </el-card>
       </div>
     </template>

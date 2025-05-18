@@ -39,14 +39,14 @@
       :xs="24"
       :sm="24"
       :md="24"
-      :lg="12"
-      :xl="12"
+      :lg="24"
+      :xl="24"
       v-for="(item, index) in statisticsType"
       :key="index"
-      class="mb-16"
+      class="mb-24"
     >
       <el-card shadow="never">
-        <div class="p-8">
+        <div class="p-24">
           <AppCharts height="316px" :id="item.id" type="line" :option="item.option" />
         </div>
       </el-card>

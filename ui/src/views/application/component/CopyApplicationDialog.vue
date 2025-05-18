@@ -78,6 +78,7 @@ const applicationForm = ref<ApplicationFormType>({
   prologue: t('views.application.applicationForm.form.defaultPrologue'),
   dataset_id_list: [],
   dataset_setting: {
+    ying_yong_zhi_shi_ku:false,
     top_n: 3,
     similarity: 0.6,
     max_paragraph_char_number: 5000,
@@ -114,6 +115,7 @@ watch(dialogVisible, (bool) => {
       prologue: t('views.application.applicationForm.form.defaultPrologue'),
       dataset_id_list: [],
       dataset_setting: {
+        ying_yong_zhi_shi_ku:false,
         top_n: 3,
         similarity: 0.6,
         max_paragraph_char_number: 5000,

@@ -1,0 +1,13 @@
+version: "3.3"
+services:
+ postgres:
+  image: ankane/pgvector:latest
+  container_name: pjp_postgres
+  restart: always
+  environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+  ports:
+    - 5555:5432
+  volumes:
+    - ./data:/var/lib/postgresql/data

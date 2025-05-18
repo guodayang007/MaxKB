@@ -1,21 +1,26 @@
 <template>
   <LayoutContainer class="create-application">
     <template #header>
-      <div class="flex-between w-full">
+      <!-- <div class="flex-between w-full">
         <h3>
           {{ $t('common.setting') }}
         </h3>
         <el-button type="primary" @click="submit(applicationFormRef)" :disabled="loading">
           {{ $t('views.application.applicationForm.buttons.publish') }}
         </el-button>
-      </div>
+      </div> -->
     </template>
     <el-row v-loading="loading">
-      <el-col :span="10">
+      <el-col :span="10" style="">
         <div class="p-24 mb-16" style="padding-bottom: 0">
-          <h4 class="title-decoration-1">
-            {{ $t('views.applicationOverview.appInfo.header') }}
-          </h4>
+          <div class="flex-between align-center">
+            <h4 class="title-decoration-1">
+              {{ $t('views.applicationOverview.appInfo.header') }}
+            </h4>
+            <el-button type="primary" @click="submit(applicationFormRef)" :disabled="loading">
+              {{ $t('views.application.applicationForm.buttons.publish') }}
+            </el-button>
+          </div>
         </div>
         <div class="scrollbar-height-left">
           <el-scrollbar>
@@ -89,6 +94,7 @@
               <el-form-item
                 :label="$t('views.application.applicationForm.form.roleSettings.label')"
               >
+
                 <MdEditorMagnify
                   :title="$t('views.application.applicationForm.form.roleSettings.label')"
                   v-model="applicationForm.model_setting.system"
@@ -308,6 +314,23 @@
                 </template>
               </el-form-item>
 
+              <el-form-item @click.prevent>
+                <template #label>
+                  <div class="flex-between">
+                    <span class="mr-4">
+                      {{ $t('views.application.applicationForm.form.reasoningContent.A1') }}
+                    </span>
+                    <div class="flex">
+                      <el-switch
+                        class="ml-8"
+                        size="small"
+                        v-model="applicationForm.dataset_setting.ying_yong_zhi_shi_ku"
+                      />
+                    </div>
+                  </div>
+                </template>
+              </el-form-item>
+
               <el-form-item
                 prop="stt_model_id"
                 :rules="{
@@ -356,6 +379,7 @@
                   trigger: 'change'
                 }"
               >
+<!--                {{applicationForm.dataset_setting.ying_yong_zhi_shi_ku}}-->
                 <template #label>
                   <div class="flex-between">
                     <span class="mr-4"
@@ -428,6 +452,7 @@
       <el-col :span="14" class="p-24 border-l">
         <h4 class="title-decoration-1 mb-16">
           {{ $t('views.application.applicationForm.title.appTest') }}
+          <!-- 调试预览 -->
         </h4>
         <div class="dialog-bg">
           <div class="flex align-center p-16 mb-8">
@@ -549,6 +574,7 @@ const applicationForm = ref<ApplicationFormType>({
   prologue: t('views.application.applicationForm.form.defaultPrologue'),
   dataset_id_list: [],
   dataset_setting: {
+    ying_yong_zhi_shi_ku:false,
     top_n: 3,
     similarity: 0.6,
     max_paragraph_char_number: 5000,
@@ -791,7 +817,6 @@ onMounted(() => {
   }
 
   .dialog-bg {
-    border-radius: 8px;
     background: var(--dialog-bg-gradient-color);
     overflow: hidden;
     box-sizing: border-box;

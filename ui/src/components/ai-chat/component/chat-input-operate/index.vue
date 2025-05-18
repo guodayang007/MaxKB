@@ -757,7 +757,7 @@ const handleTimeChange = () => {
     }
   }, 1000)
 }
-// 停止计时的函数
+// 停止计时的工具
 const stopTimer = () => {
   if (intervalId.value !== null) {
     clearInterval(intervalId.value)

@@ -1,10 +1,10 @@
 export default {
-  title: '应用',
+  title: '应用中心',
   createApplication: '创建应用',
   importApplication: '导入应用',
   copyApplication: '复制应用',
-  workflow: '高级编排',
-  simple: '简单配置',
+  workflow: '工作流',
+  simple: '聊天助手',
   searchBar: {
     placeholder: '按名称搜索'
   },
@@ -106,7 +106,8 @@ export default {
         label: '输出思考',
         tooltip: '请根据模型返回的思考标签设置，标签中间的内容将会认定为思考过程',
         start: '开始',
-        end: '结束'
+        end: '结束',
+        A1: "渲染索引段落",
       }
     },
     buttons: {

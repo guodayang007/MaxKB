@@ -12,7 +12,7 @@ export const routes: Array<RouteRecordRaw> = [
     children: [...rolesRoutes]
   },
 
-  // 高级编排
+  // 工作流
   {
     path: '/application/:id/workflow',
     name: 'ApplicationWorkflow',

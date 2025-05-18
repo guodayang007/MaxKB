@@ -217,6 +217,7 @@ const defaultPrompt =
 
 const form = ref<any>({
   dataset_setting: {
+    ying_yong_zhi_shi_ku:false,
     search_mode: 'embedding',
     top_n: 3,
     similarity: 0.6,
@@ -261,6 +262,7 @@ watch(dialogVisible, (bool) => {
   if (!bool) {
     form.value = {
       dataset_setting: {
+        ying_yong_zhi_shi_ku:false,
         search_mode: 'embedding',
         top_n: 3,
         similarity: 0.6,

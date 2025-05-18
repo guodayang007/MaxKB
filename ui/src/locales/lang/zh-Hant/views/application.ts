@@ -106,7 +106,8 @@ export default {
         label: '輸出思考',
         tooltip: '請根據模型返回的思考標簽設置，標簽中間的內容將會認定爲思考過程',
         start: '開始',
-        end: '結束'
+        end: '結束',
+        A1: "渲染索引段落",
       }
     },
     buttons: {

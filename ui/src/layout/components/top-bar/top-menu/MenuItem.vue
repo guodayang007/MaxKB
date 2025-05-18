@@ -1,20 +1,34 @@
 <template>
   <div
     class="menu-item-container flex-center h-full"
-    :class="isActive ? 'active' : ''"
+    :class="[isActive ? 'active' : '', 'menu-hover-effect']"
     @click="router.push({ name: menu.name })"
   >
-    <!-- <div class="icon">
-      <AppIcon :iconName="menu.meta ? (menu.meta.icon as string) : '404'" />
-    </div> -->
-    <div class="title">
-      {{ $t(menu.meta?.title as string) }}
+    <div class="menu-content">
+      <div class="icon-wrapper">
+        <el-icon class="nav-icon" :class="{'icon-active': isActive}">
+          <component :is="getMenuIcon" />
+        </el-icon>
+      </div>
+      <div class="title">{{ $t(menu.meta?.title as string) }}</div>
     </div>
+    <div class="active-indicator"></div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { useRouter, useRoute, type RouteRecordRaw } from 'vue-router'
 import { computed } from 'vue'
+import { 
+  Menu, 
+  House, 
+  Connection,
+  Monitor,
+  ChatDotRound,
+  Setting,
+  Document
+} from '@element-plus/icons-vue'
+
 const router = useRouter()
 const route = useRoute()
 
@@ -26,36 +40,147 @@ const isActive = computed(() => {
   const { name, path, meta } = route
   return (name == props.menu.name && path == props.menu.path) || meta?.activeMenu == props.menu.path
 })
+
+// 根据路由名称返回对应的图标
+const getMenuIcon = computed(() => {
+  switch (props.menu.name) {
+    case 'home':
+      return House
+    case 'application':
+      return Monitor
+    case 'dataset':
+      return Document
+    case 'chat':
+      return ChatDotRound
+    case 'workflow':
+      return Connection
+    case 'setting':
+      return Setting
+    default:
+      return Menu
+  }
+})
 </script>
+
 <style lang="scss" scoped>
 .menu-item-container {
   margin-right: 28px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 15px;
   position: relative;
+  padding: 0 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  .menu-content {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
 
-  .icon {
-    font-size: 15px;
-    margin-right: 5px;
-    margin-top: 2px;
+  .icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-right: 6px;
+    border-radius: 6px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: transparent;
+    
+    .nav-icon {
+      font-size: 18px;
+      color: var(--el-text-color-regular);
+      transition: all 0.3s ease;
+      
+      &.icon-active {
+        color: rgb(80, 181, 167);
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .title {
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background: linear-gradient(to right, rgb(80, 181, 167), rgb(80, 181, 167));
+    background-size: 0 2px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+  }
+
+  .active-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    width: 24px;
+    height: 3px;
+    background: linear-gradient(90deg,
+      rgba(80, 181, 167, 0.5),
+      rgb(80, 181, 167),
+      rgba(80, 181, 167, 0.5)
+    );
+    border-radius: 3px 3px 0 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
   }
 
   &:hover {
-    color: var(--el-color-primary);
+    .icon-wrapper {
+      background: rgba(80, 181, 167, 0.1);
+      transform: translateY(-2px);
+      
+      .nav-icon {
+        color: rgb(80, 181, 167);
+      }
+    }
+    
+    .title {
+      color: rgb(80, 181, 167);
+      background-size: 100% 2px;
+    }
+  }
+
+  &.active {
+    color: rgb(80, 181, 167);
+    
+    .icon-wrapper {
+      background: rgba(80, 181, 167, 0.1);
+    }
+    
+    .title {
+      color: rgb(80, 181, 167);
+      background-size: 100% 2px;
+    }
+    
+    .active-indicator {
+      opacity: 1;
+      transform: translateX(-50%) scaleX(1);
+      box-shadow: 0 0 8px rgba(80, 181, 167, 0.2);
+    }
   }
 }
 
-.active {
-  color: var(--el-color-primary);
-
-  &::after {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 2px;
+// 添加鼠标悬停特效
+.menu-hover-effect {
+  &::before {
     content: '';
-    background-color: var(--el-color-primary-light-9);
-    border-bottom: 3px solid var(--el-color-primary);
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+      rgba(80, 181, 167, 0.08),
+      rgba(80, 181, 167, 0.02)
+    );
+    border-radius: 8px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1;
+  }
+  
+  &:hover::before {
+    opacity: 1;
   }
 }
 </style>

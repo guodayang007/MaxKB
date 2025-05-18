@@ -208,7 +208,7 @@ const render = (
   }
 }
 /**
- * 校验函数
+ * 校验工具
  */
 const validate = () => {
   return Promise.all([
@@ -217,7 +217,7 @@ const validate = () => {
   ])
 }
 
-// 暴露获取当前表单数据函数
+// 暴露获取当前表单数据工具
 defineExpose({
   initDefaultData,
   validate,

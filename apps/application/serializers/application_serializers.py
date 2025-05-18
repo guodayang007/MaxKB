@@ -1011,6 +1011,7 @@ class ApplicationSerializer(serializers.Serializer):
                  'tts_autoplay': application.tts_autoplay,
                  'stt_autosend': application.stt_autosend,
                  'file_upload_enable': application.file_upload_enable,
+                 'ying_yong_zhi_shi_ku':application.dataset_setting.get('ying_yong_zhi_shi_ku', False),  #  郭大洋？
                  'file_upload_setting': application.file_upload_setting,
                  'work_flow': {'nodes': [node for node in ((application.work_flow or {}).get('nodes', []) or []) if
                                          node.get('id') == 'base-node']},

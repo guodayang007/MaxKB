@@ -594,7 +594,7 @@ defineExpose({ open })
 </script>
 <style lang="scss">
 .setting-preview {
-  background: #f5f6f7;
+  background: #f9fafd;
   height: 570px;
   position: relative;
 

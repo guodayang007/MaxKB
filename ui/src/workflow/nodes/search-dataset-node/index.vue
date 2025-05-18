@@ -151,6 +151,7 @@ const nodeCascaderRef = ref()
 const form = {
   dataset_id_list: [],
   dataset_setting: {
+    ying_yong_zhi_shi_ku:false,
     top_n: 3,
     similarity: 0.6,
     max_paragraph_char_number: 5000,

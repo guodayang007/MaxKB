@@ -312,7 +312,7 @@ const putPublishApplication: (
   return put(`${prefix}/${application_id}/publish`, data, undefined, loading)
 }
 /**
- * 获取应用所属的函数库列表
+ * 获取应用所属的工具库列表
  * @param application_id 应用id
  * @param loading
  * @returns
@@ -336,7 +336,7 @@ export const getApplicationList: (
   return get(`${prefix}/${application_id}/application`, undefined, loading)
 }
 /**
- * 获取应用所属的函数库
+ * 获取应用所属的工具库
  * @param application_id
  * @param function_lib_id
  * @param loading

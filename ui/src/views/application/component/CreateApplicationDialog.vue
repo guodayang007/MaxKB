@@ -6,6 +6,7 @@
     append-to-body
     :close-on-click-modal="false"
     :close-on-press-escape="false"
+    class="create-application-dialog"
   >
     <el-form
       ref="applicationFormRef"
@@ -15,6 +16,38 @@
       require-asterisk-position="right"
       @submit.prevent
     >
+    <el-form-item>
+        <el-radio-group v-model="applicationForm.type" class="card__radio">
+          <el-row :gutter="16">
+            <el-col :span="12">
+              <el-card shadow="never" :class="applicationForm.type === 'SIMPLE' ? 'active' : ''">
+                <el-radio value="SIMPLE" size="large">
+                  <div class="type-header">
+                    <el-icon class="type-icon"><Document /></el-icon>
+                    <p class="mb-4">{{ $t('views.application.simple') }}</p>
+                  </div>
+                  <el-text type="info">{{
+                    $t('views.application.applicationForm.form.appType.simplePlaceholder')
+                  }}</el-text>
+                </el-radio>
+              </el-card>
+            </el-col>
+            <el-col :span="12" @click="selectedType('assistant')">
+              <el-card shadow="never" :class="isWorkFlow(applicationForm.type) ? 'active' : ''">
+                <el-radio value="WORK_FLOW" size="large">
+                  <div class="type-header">
+                    <el-icon class="type-icon"><Connection /></el-icon>
+                    <p class="mb-4">{{ $t('views.application.workflow') }}</p>
+                  </div>
+                  <el-text type="info">{{
+                    $t('views.application.applicationForm.form.appType.workflowPlaceholder')
+                  }}</el-text>
+                </el-radio>
+              </el-card>
+            </el-col>
+          </el-row>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item :label="$t('views.application.applicationForm.form.appName.label')" prop="name">
         <el-input
           v-model="applicationForm.name"
@@ -34,68 +67,17 @@
           show-word-limit
         />
       </el-form-item>
-      <el-form-item :label="$t('views.application.applicationForm.form.appType.label')">
-        <el-radio-group v-model="applicationForm.type" class="card__radio">
-          <el-row :gutter="16">
-            <el-col :span="12">
-              <el-card shadow="never" :class="applicationForm.type === 'SIMPLE' ? 'active' : ''">
-                <el-radio value="SIMPLE" size="large">
-                  <p class="mb-4">{{ $t('views.application.simple') }}</p>
-                  <el-text type="info">{{
-                    $t('views.application.applicationForm.form.appType.simplePlaceholder')
-                  }}</el-text>
-                </el-radio>
-              </el-card>
-            </el-col>
-            <el-col :span="12">
-              <el-card shadow="never" :class="isWorkFlow(applicationForm.type) ? 'active' : ''">
-                <el-radio value="WORK_FLOW" size="large">
-                  <p class="mb-4">{{ $t('views.application.workflow') }}</p>
-                  <el-text type="info">{{
-                    $t('views.application.applicationForm.form.appType.workflowPlaceholder')
-                  }}</el-text>
-                </el-radio>
-              </el-card>
-            </el-col>
-          </el-row>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item
-        :label="$t('views.document.upload.template')"
-        v-if="applicationForm.type === 'WORK_FLOW'"
-      >
-        <div class="w-full">
-          <el-row :gutter="16">
-            <el-col :span="12">
-              <el-card
-                class="radio-card cursor"
-                shadow="never"
-                @click="selectedType('blank')"
-                :class="appTemplate === 'blank' ? 'active' : ''"
-              >
-                {{ $t('views.application.applicationForm.form.appTemplate.blankApp') }}
-              </el-card>
-            </el-col>
-            <el-col :span="12">
-              <el-card
-                class="radio-card cursor"
-                shadow="never"
-                :class="appTemplate === 'assistant' ? 'active' : ''"
-                @click="selectedType('assistant')"
-              >
-                {{ $t('views.application.applicationForm.form.appTemplate.assistantApp') }}
-              </el-card>
-            </el-col>
-          </el-row>
-        </div>
-      </el-form-item>
+      
+     
     </el-form>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click.prevent="dialogVisible = false" :loading="loading">
+          <el-icon class="mr-1"><Close /></el-icon>
           {{ $t('common.cancel') }}
         </el-button>
         <el-button type="primary" @click="submitHandle(applicationFormRef)" :loading="loading">
+          <el-icon class="mr-1"><Check /></el-icon>
           {{ $t('common.create') }}
         </el-button>
       </span>
@@ -103,6 +85,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
+import { Document, Connection, Close, Check } from '@element-plus/icons-vue'
 import { ref, watch, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import type { ApplicationFormType } from '@/api/type/application'
@@ -147,6 +130,7 @@ const applicationForm = ref<ApplicationFormType>({
   prologue: t('views.application.applicationForm.form.defaultPrologue'),
   dataset_id_list: [],
   dataset_setting: {
+    ying_yong_zhi_shi_ku:false,
     top_n: 3,
     similarity: 0.6,
     max_paragraph_char_number: 5000,
@@ -199,6 +183,7 @@ watch(dialogVisible, (bool) => {
       prologue: t('views.application.applicationForm.form.defaultPrologue'),
       dataset_id_list: [],
       dataset_setting: {
+        ying_yong_zhi_shi_ku:false,
         top_n: 3,
         similarity: 0.6,
         max_paragraph_char_number: 5000,
@@ -265,6 +250,174 @@ defineExpose({ open })
   &.active {
     border-color: var(--el-color-primary);
     color: var(--el-color-primary);
+  }
+}
+
+.create-application-dialog {
+  .el-dialog {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(80, 181, 167, 0.15);
+    
+    :deep(.el-dialog__header) {
+      margin: 0;
+      padding: 24px;
+      border-bottom: 1px solid rgba(80, 181, 167, 0.1);
+      background: linear-gradient(135deg, rgba(80, 181, 167, 0.08), rgba(80, 181, 167, 0.02));
+      
+      .el-dialog__title {
+        font-size: 18px;
+        font-weight: 600;
+        background: linear-gradient(to right, rgb(80, 181, 167), rgba(80, 181, 167, 0.7));
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+    }
+    
+    :deep(.el-dialog__body) {
+      padding: 24px;
+    }
+    
+    :deep(.el-dialog__footer) {
+      padding: 16px 24px;
+      border-top: 1px solid rgba(80, 181, 167, 0.1);
+      background: rgba(80, 181, 167, 0.02);
+    }
+  }
+}
+
+.el-form {
+  .el-form-item {
+    margin-bottom: 24px;
+    
+    :deep(.el-form-item__label) {
+      padding-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--el-text-color-primary);
+      
+      &::before {
+        color: rgb(80, 181, 167);
+      }
+    }
+  }
+}
+
+// 输入框样式优化
+:deep(.el-input__wrapper),
+:deep(.el-textarea__inner) {
+  box-shadow: none !important;
+  border: 1px solid rgba(80, 181, 167, 0.2);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: rgba(80, 181, 167, 0.4);
+  }
+  
+  &:focus-within {
+    border-color: rgb(80, 181, 167);
+    box-shadow: 0 0 0 2px rgba(80, 181, 167, 0.1) !important;
+  }
+}
+
+// 单选卡片组样式
+.card__radio {
+  width: 100%;
+  
+  :deep(.el-radio__input) {
+    display: none;
+  }
+  
+  .type-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    
+    .type-icon {
+      font-size: 24px;
+      margin-right: 12px;
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(80, 181, 167, 0.1);
+      color: rgb(80, 181, 167);
+    }
+    
+    p {
+      font-size: 16px;
+      font-weight: 500;
+      margin: 0;
+    }
+  }
+  
+  .el-card {
+    height: 100%;
+    border: 1px solid rgba(80, 181, 167, 0.2);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    
+    &:hover {
+      transform: translateY(-2px);
+      border-color: rgba(80, 181, 167, 0.4);
+      background: rgba(80, 181, 167, 0.02);
+      box-shadow: 0 4px 12px rgba(80, 181, 167, 0.1);
+    }
+    
+    &.active {
+      border-color: rgb(80, 181, 167);
+      background: rgba(80, 181, 167, 0.05);
+      
+      .type-icon {
+        background: rgb(80, 181, 167);
+        color: white;
+      }
+      
+      :deep(.el-radio__label) {
+        color: rgb(80, 181, 167);
+      }
+    }
+    
+    :deep(.el-card__body) {
+      padding: 20px;
+    }
+    
+    .el-text {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--el-text-color-secondary);
+    }
+  }
+}
+
+// 底部按钮样式
+.dialog-footer {
+  text-align: right;
+  
+  .el-button {
+    min-width: 100px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    .el-icon {
+      font-size: 16px;
+    }
+    
+    &:not(:last-child) {
+      margin-right: 12px;
+    }
+    
+    &--primary {
+      background: linear-gradient(135deg, rgb(80, 181, 167), rgba(80, 181, 167, 0.9));
+      border: none;
+      
+      &:hover {
+        background: linear-gradient(135deg, rgba(80, 181, 167, 0.9), rgb(80, 181, 167));
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(80, 181, 167, 0.2);
+      }
+    }
   }
 }
 </style>
