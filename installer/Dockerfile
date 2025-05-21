@@ -23,13 +23,14 @@ RUN apt-get update && \
 COPY . /opt/maxkb/app
 RUN mkdir -p /opt/maxkb/app /opt/maxkb/model /opt/maxkb/conf && \
     rm -rf /opt/maxkb/app/ui
-
+# ! gtai-docker The requested image's platform (linux/arm64) does not match the detected host platform (linux/amd64/v4) and no specific platform was requested
 COPY --from=web-build ui /opt/maxkb/app/ui
 WORKDIR /opt/maxkb/app
 RUN python3 -m venv /opt/py3 && \
     pip install poetry==1.8.5 --break-system-packages && \
     poetry config virtualenvs.create false && \
     . /opt/py3/bin/activate && \
+    # if [ "$(uname -m)" = "x86_64" ] || [ "$TARGETARCH" = "amd64" ]; then sed -i 's/^torch.*/torch = {version = "2.6.0+cpu", source = "pytorch"}/g' pyproject.toml; fi && \
     if [ "$(uname -m)" = "x86_64" ]; then sed -i 's/^torch.*/torch = {version = "2.6.0+cpu", source = "pytorch"}/g' pyproject.toml; fi && \
     poetry install && \
     export MAXKB_CONFIG_TYPE=ENV && python3 /opt/maxkb/app/apps/manage.py compilemessages
@@ -77,7 +78,7 @@ RUN chmod 755 /opt/maxkb/app/installer/run-maxkb.sh && \
     chmod g-x /usr/local/bin/* /usr/bin/* /bin/* /usr/sbin/* /sbin/* /usr/lib/postgresql/15/bin/* && \
     chmod g+x /usr/local/bin/python*
 
-EXPOSE 8080
+EXPOSE 8080  5432
 
 ENTRYPOINT ["bash", "-c"]
 CMD [ "/usr/bin/run-maxkb.sh" ]
